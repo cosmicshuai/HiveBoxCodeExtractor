@@ -19,7 +19,7 @@ namespace HiveBoxCodeExtractor.Controllers
 
         [Route("api/getCode")]
         [HttpGet]
-        public string GetBoxCode([FromQuery]string content)
+        public IActionResult GetBoxCode([FromQuery]string content)
         {
             //【丰巢】凭取件码63610565至海悦花园七区16幢架空层3号丰巢取中通快递包裹。有疑问联系快递员13732531641
             Regex fcRegex = new(@"^【丰巢】.*凭取件码([0-9]{8})至(.*)丰巢取(.{4})包裹。.*");
@@ -28,7 +28,7 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = fcRegex.Match(content);
                 var code = matched.Groups[1].Value;
                 var location = matched.Groups[2].Value;
-                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+                return Content(code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d"));
             }
 
             //【菜鸟驿站】您的中通包裹已到苏州海悦花园七区物业店，请21:00前凭3-1-2009取件，详询13451534429
@@ -38,10 +38,10 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = cnRegex.Match(content);
                 var code = matched.Groups[2].Value;
                 var location = matched.Groups[1].Value;
-                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+                return Content(code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d"));
             }
 
-            return "Not A Code";
+            return new NoContentResult();
         }
     }
 }
