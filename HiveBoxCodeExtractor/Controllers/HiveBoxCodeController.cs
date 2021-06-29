@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using LruCacheNet
+using LruCacheNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -36,7 +36,8 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = fcRegex.Match(content);
                 var code = matched.Groups[1].Value;
                 var location = matched.Groups[2].Value;
-                return "🐎"+ code + "📍" + location + "⏰" + DateTime.Now.Date.ToString("d");
+                _cache.AddOrUpdate(content, 1);
+                return "🐎" + code + "📍" + location + "⏰" + DateTime.Now.Date.ToString("d");
             }
 
             //【菜鸟驿站】您的中通包裹已到苏州海悦花园七区物业店，请21:00前凭3-1-2009取件，详询13451534429
@@ -46,6 +47,7 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = cnRegex.Match(content);
                 var code = matched.Groups[2].Value;
                 var location = matched.Groups[1].Value;
+                _cache.AddOrUpdate(content, 1);
                 return  "🐎"+ code + "📍" + location + "⏰" + DateTime.Now.Date.ToString("d");
             }
 
