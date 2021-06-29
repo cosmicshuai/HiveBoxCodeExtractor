@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,25 +17,31 @@ namespace HiveBoxCodeExtractor.Controllers
             _logger = logger;
         }
 
+        [Route("api/getCode")]
         [HttpGet]
-        public string Get()
+        public string GetBoxCode([FromQuery]string content)
         {
-            var codeEvent = new HiveCodeEvent
+            //【丰巢】凭取件码63610565至海悦花园七区16幢架空层3号丰巢取中通快递包裹。有疑问联系快递员13732531641
+            Regex fcRegex = new(@"^【丰巢】.*凭取件码([0-9]{8})至(.*)丰巢取(.{4})包裹。.*");
+            if (fcRegex.IsMatch(content))
             {
-                Date = DateTime.Now,
-                Location = "MidSea Area 7 Building 16",
-                BoxNumber = 3,
-                openCode = "23114533",
-                vendor = "SF Express"
-            };
+                var matched = fcRegex.Match(content);
+                var code = matched.Groups[1].Value;
+                var location = matched.Groups[2].Value;
+                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+            }
 
-            return $"You have a new Packege, @{codeEvent.Location}, box: {codeEvent.BoxNumber}, code: {codeEvent.openCode}";
-        }
+            //【菜鸟驿站】您的中通包裹已到苏州海悦花园七区物业店，请21:00前凭3-1-2009取件，详询13451534429
+            Regex cnRegex = new(@"^【菜鸟驿站】.*已到(.*)，请.*凭(\d-\d-\d{4})取件，.*");
+            if (cnRegex.IsMatch(content))
+            {
+                var matched = cnRegex.Match(content);
+                var code = matched.Groups[2].Value;
+                var location = matched.Groups[1].Value;
+                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+            }
 
-        [HttpPost]
-        public string Post()
-        {
-            return "";
+            return "Not A Code";
         }
     }
 }
