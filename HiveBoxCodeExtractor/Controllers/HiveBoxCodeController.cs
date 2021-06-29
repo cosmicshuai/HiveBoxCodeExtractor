@@ -29,7 +29,7 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = fcRegex.Match(content);
                 var code = matched.Groups[1].Value;
                 var location = matched.Groups[2].Value;
-                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+                return "🐎"+ code + "📍" + location + "⏰" + DateTime.Now.Date.ToString("d");
             }
 
             //【菜鸟驿站】您的中通包裹已到苏州海悦花园七区物业店，请21:00前凭3-1-2009取件，详询13451534429
@@ -39,7 +39,7 @@ namespace HiveBoxCodeExtractor.Controllers
                 var matched = cnRegex.Match(content);
                 var code = matched.Groups[2].Value;
                 var location = matched.Groups[1].Value;
-                return code + "  ||  " + location + "  || " + DateTime.Now.Date.ToString("d");
+                return  "🐎"+ code + "📍" + location + "⏰" + DateTime.Now.Date.ToString("d");
             }
 
             return "Not Valid";
